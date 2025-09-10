@@ -7,7 +7,7 @@ The plugin provides its own **UX panel**, **print queue**, **logs**, **security 
 
 ---
 
-## Features
+## ✨ Features
 
 - 🔌 **Direct Novitus API** integration (printer configuration & connectivity).
 - 🧾 **Fiscal & non-fiscal receipts** (with/without VAT ID / NIP).
@@ -59,23 +59,98 @@ The plugin provides its own **UX panel**, **print queue**, **logs**, **security 
 
 ## ⚙️ How it works
 
-1. **Trigger** — order action (manual) or automatic rule (e.g. order status *completed*).
-2. **Queue Job** — plugin creates a new print job in its database.
-3. **Payload Builder** — prepare JSON payload with items, totals, VAT, NIP.
-4. **Novitus API Call** — send request to fiscal/non-fiscal endpoint.
+1. **Trigger** — order action (manual) or automatic rule (e.g. order status *completed*).  
+2. **Queue Job** — plugin creates a new print job in its database.  
+3. **Payload Builder** — prepare JSON payload with items, totals, VAT, NIP.  
+4. **Novitus API Call** — send request to fiscal/non-fiscal endpoint.  
 5. **Result Handling**:
-   - On success → store receipt ID, generate file, attach to order.
-   - On error → retry or mark failed, log details.
-6. **Admin Panel** — operators can re-print, download, or void receipts.
+   - On success → store receipt ID, generate file, attach to order.  
+   - On error → retry or mark failed, log details.  
+6. **Admin Panel** — operators can re-print, download, or void receipts.  
 
 ---
 
 ## 🔌 REST API (Internal)
 
-- `POST /wp-json/wnr/v1/print`
+- **Print Receipt**
+  ```http
+  POST /wp-json/wnr/v1/print
+  ```
   ```json
   {
     "order_id": 12345,
     "type": "fiscal",
     "nip": "PL1234567890"
   }
+  ```
+
+- **Check Status**
+  ```http
+  GET /wp-json/wnr/v1/status?job_id=987
+  ```
+  ```json
+  {
+    "job_id": 987,
+    "status": "queued",
+    "order_id": 12345
+  }
+  ```
+
+- **Retry Failed Job**
+  ```http
+  POST /wp-json/wnr/v1/retry
+  ```
+
+- **Cancel Job**
+  ```http
+  POST /wp-json/wnr/v1/cancel
+  ```
+
+---
+
+## 🗄️ Data Model
+
+**Table** `wp_wnr_receipts`  
+- `id`, `order_id`, `type`, `nip`, `payload_json`, `novitus_id`, `status`, `file_path`, `created_at`, `updated_at`
+
+**Table** `wp_wnr_queue`  
+- `id`, `order_id`, `operation`, `attempts`, `status`, `last_error`, `created_at`, `updated_at`
+
+---
+
+## 🧭 Architecture Diagram
+
+```mermaid
+flowchart TD
+  A[Order action / Auto rule] --> B[Create queue job]
+  B --> C[Worker picks job]
+  C --> D[Build payload (items, totals, VAT, NIP)]
+  D --> E[Call Novitus API (fiscal / non-fiscal)]
+  E -->|OK| F[Store receipt ID + file]
+  E -->|Error| G[Retry / Log failure]
+  F --> H[Attach to order + Admin panel]
+  H --> I[Download / Re-print / Void (if supported)]
+```
+
+---
+
+## 🗺️ Roadmap / In Progress
+
+- 📸 Add public **screenshots** (Admin UI, queue, settings).  
+- 🔄 Support **refund / return flows** (fiscal return).  
+- 🌐 **Multi-printer support**.  
+- ✅ 2-step approvals for re-print actions.  
+
+---
+
+## 📄 License
+
+GPL-2.0-or-later  
+
+---
+
+## 👤 Author
+
+Jakub Róg  
+📍 Poland / Remote  
+🔗 [LinkedIn](https://www.linkedin.com/in/jakub-róg-a15152380/)  
