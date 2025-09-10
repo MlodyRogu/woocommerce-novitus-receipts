@@ -7,7 +7,7 @@ The plugin provides its own **UX panel**, **print queue**, **logs**, **security 
 
 ---
 
-##Features
+## Features
 
 - 🔌 **Direct Novitus API** integration (printer configuration & connectivity).
 - 🧾 **Fiscal & non-fiscal receipts** (with/without VAT ID / NIP).
