@@ -122,14 +122,15 @@ The plugin provides its own **UX panel**, **print queue**, **logs**, **security 
 
 ```mermaid
 flowchart TD
-  A[Order action / Auto rule] --> B[Create queue job]
-  B --> C[Worker picks job]
-  C --> D[Build payload (items, totals, VAT, NIP)]
-  D --> E[Call Novitus API (fiscal / non-fiscal)]
-  E -->|OK| F[Store receipt ID + file]
-  E -->|Error| G[Retry / Log failure]
-  F --> H[Attach to order + Admin panel]
-  H --> I[Download / Re-print / Void (if supported)]
+  A["Order action / Auto rule"] --> B["Create queue job"]
+  B --> C["Worker picks job"]
+  C --> D["Build payload: items, totals, VAT, NIP"]
+  D --> E["Call Novitus API: fiscal / non-fiscal"]
+  E -->|OK| F["Store receipt ID + file"]
+  E -->|Error| G["Retry / Log failure"]
+  F --> H["Attach to order + Admin panel"]
+  H --> I["Download / Re-print / Void (if supported)"]
+
 ```
 
 ---
