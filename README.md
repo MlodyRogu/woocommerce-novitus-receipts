@@ -1,0 +1,1 @@
+# woocommerce-novitus-receipts
